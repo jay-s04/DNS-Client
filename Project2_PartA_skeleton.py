@@ -90,23 +90,65 @@ def parse_response(data):
 		 TODO  Add code to extract IPv4 address or IPv6 address based on atype and rdlength
 		 Answer should contain three fields "type","ip", and "ttl"
         '''
-        if (atype == 0x0001):
-            answers.append("A")
-        # elif (atype == 0x001C):
-        #     answers.append("AAAA")
-        # elif (atype == 0x0002):
-        #     answers.append("name server")
+        # if (atype == 0x0001):
+        #     answers.append("A")
+        # # elif (atype == 0x001C):
+        # #     answers.append("AAAA")
+        # # elif (atype == 0x0002):
+        # #     answers.append("name server")
 
-        print("the rdata is: " + str(rdata))
-        ip_number = int.from_bytes(rdata, byteorder='big')
-        print(ip_number)
-        answers.append(socket.inet_ntoa(struct.pack('!L', ip_number)))
-        answers.append(ttl)
-        print(answers)
+        # print("the rdata is: " + str(rdata))
+        # print("rdata length is " + str(rdlength))
+        # if (rdlength != 4):
+        #     print(str(rdata) + " is not a valid ipv4 address")
+        #     return
+        # ip_number = int.from_bytes(rdata, byteorder='big')
+        # print(ip_number)
+        # answers.append(socket.inet_ntoa(struct.pack('!L', ip_number)))
+        # answers.append(ttl)
+        # A record
+        if atype == 1 and rdlength == 4:
+            ip = socket.inet_ntoa(rdata)
+            answers.append({"type": "A", "ip": ip, "ttl": ttl})
+
+# CNAME record
+        elif atype == 5:
+            cname, _ = parse_name(data, offset - rdlength)
+            cname_target = cname
+            answers.append({"type": "CNAME", "alias": cname_target, "ttl": ttl})
+
 
     response["answers"] = answers
     return response
 
+def parse_name(data, offset):
+    labels = []
+    jumped = False
+    orig_offset = offset
+
+    while True:
+        length = data[offset]
+        # End of name
+        if length == 0:
+            offset += 1
+            break
+        if (length & 0xC0) == 0xC0:
+            pointer = struct.unpack("!H", data[offset:offset + 2])[0] & 0x3FFF
+            if not jumped:
+                orig_offset = offset + 2  
+            offset = pointer
+            jumped = True
+            continue
+
+        offset += 1
+        label = data[offset:offset + length].decode()
+        labels.append(label)
+        offset += length
+
+    if jumped:
+        return ".".join(labels), orig_offset
+    else:
+        return ".".join(labels), offset
 
 def dns_query(query_spec, server=("8.8.8.8", 53)):
     query = build_query(query_spec)
