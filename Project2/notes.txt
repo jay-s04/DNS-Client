@@ -1,0 +1,12 @@
+Fields in the query I should be aware of:
+TC TrunCation - specifies that this message was truncated. For this project, you must exit and return
+an error if you receive a response that is truncated
+
+RD Recursion Desired - this bit directs the name server to pursue the query recursively. You should
+use 1, representing that you desire recursion, for Part A and Part B. For Part C this should be set
+to 0.
+
+RA Recursion Available - this bit is set or cleared in a response, and denotes whether recursive
+query support is available in the name server. Recursive query support is optional. You
+must exit and return an error if you receive a response that indicates the server does not support
+recursion for Part A and Part B.
