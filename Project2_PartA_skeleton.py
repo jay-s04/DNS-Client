@@ -97,7 +97,9 @@ def parse_response(data):
         # elif (atype == 0x0002):
         #     answers.append("name server")
 
+        print("the rdata is: " + str(rdata))
         ip_number = int.from_bytes(rdata, byteorder='big')
+        print(ip_number)
         answers.append(socket.inet_ntoa(struct.pack('!L', ip_number)))
         answers.append(ttl)
         print(answers)
@@ -116,4 +118,19 @@ def dns_query(query_spec, server=("8.8.8.8", 53)):
     result=parse_response(data)
     return result
 
-print(dns_query(dns_query_spec))
+# Read questions from file input.txt
+with open("Input.json", "r") as f:
+    query_json = json.load(f)
+
+for q in query_json:
+
+    if(q['qtype'] != 1):
+        print("Invalid qtype, must be type A")
+        continue
+    query = dns_query_spec
+    query["questions"][0]["qname"] = q['qname']
+# TODO create dns_query_spec with all the fields and "qname" , "qtype" obtained from q
+    response = dns_query(dns_query_spec)
+    print(json.dumps(response, indent=2))
+# TODO append response to output.txt
+
