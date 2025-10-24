@@ -3,24 +3,22 @@ import struct
 import random
 import json
 
-# Example query spec as JSON
 dns_query_spec = {
     "id": random.randint(0, 65535),
-    "qr": 0,      # query
-    "opcode": 0,  # standard query
-    "rd": 1,      # recursion desired
+    "qr": 0,      
+    "opcode": 0,  
+    "rd": 1,      
     "questions": [
         {
-            "qname": "princeton.edu",  # <-- CHANGED from "soak.princeton.edu"
-            "qtype": 2,   # NS record
-            "qclass": 1   # IN
+            "qname": "princeton.edu",  
+            "qtype": 2,   
+            "qclass": 1   
         }
     ]
 }
 
 
 def build_query(query_spec):
-    # Header fields
     ID = query_spec["id"]
     QR = query_spec["qr"] << 15
     OPCODE = query_spec["opcode"] << 11
@@ -34,13 +32,12 @@ def build_query(query_spec):
 
     header = struct.pack("!HHHHHH", ID, flags, QDCOUNT, ANCOUNT, NSCOUNT, ARCOUNT)
 
-    # Question section
     question_bytes = b""
     for q in query_spec["questions"]:
         labels = q["qname"].split(".")
         for label in labels:
             question_bytes += struct.pack("B", len(label)) + label.encode()
-        question_bytes += b"\x00"  # end of qname
+        question_bytes += b"\x00"  
         question_bytes += struct.pack("!HH", q["qtype"], q["qclass"])
 
     return header + question_bytes
@@ -56,7 +53,6 @@ def parse_name(data, offset):
         if length == 0:
             offset += 1
             break
-        # pointer
         if (length & 0xC0) == 0xC0:
             if not jumped:
                 original_offset = offset + 2
@@ -81,7 +77,6 @@ def parse_rr(data, offset):
     rdata = data[offset:offset+rdlength]
     offset += rdlength
 
-    # Build required record with fixed keys
     type_map = {1: "A", 28: "AAAA", 2: "NS", 5: "CNAME"}
     rtype = type_map.get(atype, f"TYPE{atype}")
     record = {
@@ -93,19 +88,17 @@ def parse_rr(data, offset):
         "nsname": None
     }
 
-    # Populate fields by type
-    if atype == 1 and rdlength == 4:  # A
+    if atype == 1 and rdlength == 4:  
         record["ip"] = socket.inet_ntoa(rdata)
-    elif atype == 28 and rdlength == 16:  # AAAA
+    elif atype == 28 and rdlength == 16:  
         try:
             record["ip"] = socket.inet_ntop(socket.AF_INET6, rdata)
         except AttributeError:
             import ipaddress
             record["ip"] = str(ipaddress.IPv6Address(rdata))
-    elif atype == 2:  # NS
+    elif atype == 2:  
         nsname, _ = parse_name(data, rdata_start)
         record["nsname"] = nsname
-    # (CNAME and others leave ip/nsname as None)
 
     return record,offset
 
@@ -128,28 +121,24 @@ def parse_response(data):
     response["arcount"] = ARCOUNT
 
     offset = 12
-    # Skip questions
     for _ in range(QDCOUNT):
         while data[offset] != 0:
             offset += data[offset] + 1
         offset += 1
-        offset += 4  # qtype + qclass
+        offset += 4  
 
-    # Parse Answer RRs
     answers = []
     for _ in range(ANCOUNT):
         rr, offset = parse_rr(data, offset)
         answers.append(rr)
     response["answers"] = answers
 
-    # Parse Authority RRs
     authority = []
     for _ in range(NSCOUNT):
         rr, offset = parse_rr(data, offset)
         authority.append(rr)
     response["authority"] = authority
 
-    # Parse Additional RRs
     additional = []
     for _ in range(ARCOUNT):
         rr, offset = parse_rr(data, offset)
@@ -168,7 +157,6 @@ def dns_query(query_spec, server=("8.8.8.8", 53)):
     return parse_response(data)
 
 if __name__ == "__main__":
-    # keep assignment-conformant ID without changing the original definition
     dns_query_spec["id"] = 1337
     response = dns_query(dns_query_spec)
     print(json.dumps(response,indent=2))

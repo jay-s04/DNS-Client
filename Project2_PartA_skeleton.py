@@ -4,24 +4,22 @@ import struct
 import random
 import json
 
-# Example query spec as JSON
 dns_query_spec = {
     "id": random.randint(0, 65535),
-    "qr": 0,      # query
-    "opcode": 0,  # standard query
-    "rd": 1,      # recursion desired
+    "qr": 0,      
+    "opcode": 0,  
+    "rd": 1,      
     "questions": [
         {
             "qname": "ilab1.cs.rutgers.edu",
-            "qtype": 1,   # Arecord
-            "qclass": 1   # IN
+            "qtype": 1,   
+            "qclass": 1   
         }
     ]
 }
 
 
 def build_query(query_spec):
-    # Header fields
     ID = query_spec["id"]
     QR = query_spec["qr"] << 15
     OPCODE = query_spec["opcode"] << 11
@@ -35,13 +33,12 @@ def build_query(query_spec):
 
     header = struct.pack("!HHHHHH", ID, flags, QDCOUNT, ANCOUNT, NSCOUNT, ARCOUNT)
 
-    # Question section
     question_bytes = b""
     for q in query_spec["questions"]:
         labels = q["qname"].split(".")
         for label in labels:
             question_bytes += struct.pack("B", len(label)) + label.encode()
-        question_bytes += b"\x00"  # end of qname
+        question_bytes += b"\x00"  
         question_bytes += struct.pack("!HH", q["qtype"], q["qclass"])
 
     return header + question_bytes
@@ -63,17 +60,15 @@ def parse_response(data):
     response["ancount"] = ANCOUNT
 
     offset = 12
-    # Skip questions
     for _ in range(QDCOUNT):
         while data[offset] != 0:
             offset += data[offset] + 1
         offset += 1
-        offset += 4  # qtype + qclass
+        offset += 4  
 
-    # Parse answers
     answers = []
     for _ in range(ANCOUNT):
-        # name (compression: first two bits 11)
+
         if (data[offset] & 0xC0) == 0xC0:
             offset += 2
         else:
@@ -85,33 +80,11 @@ def parse_response(data):
         offset += 10
         rdata = data[offset:offset+rdlength]
         offset += rdlength
-        # print("atype and rdlength",atype,rdlength,type(rdata))
-        '''
-		 TODO  Add code to extract IPv4 address or IPv6 address based on atype and rdlength
-		 Answer should contain three fields "type","ip", and "ttl"
-        '''
-        # if (atype == 0x0001):
-        #     answers.append("A")
-        # # elif (atype == 0x001C):
-        # #     answers.append("AAAA")
-        # # elif (atype == 0x0002):
-        # #     answers.append("name server")
 
-        # print("the rdata is: " + str(rdata))
-        # print("rdata length is " + str(rdlength))
-        # if (rdlength != 4):
-        #     print(str(rdata) + " is not a valid ipv4 address")
-        #     return
-        # ip_number = int.from_bytes(rdata, byteorder='big')
-        # print(ip_number)
-        # answers.append(socket.inet_ntoa(struct.pack('!L', ip_number)))
-        # answers.append(ttl)
-        # A record
         if atype == 1 and rdlength == 4:
             ip = socket.inet_ntoa(rdata)
             answers.append({"type": "A", "ip": ip, "ttl": ttl})
 
-# CNAME record
         elif atype == 5:
             cname, _ = parse_name(data, offset - rdlength)
             cname_target = cname
@@ -128,7 +101,6 @@ def parse_name(data, offset):
 
     while True:
         length = data[offset]
-        # End of name
         if length == 0:
             offset += 1
             break
@@ -160,7 +132,6 @@ def dns_query(query_spec, server=("8.8.8.8", 53)):
     result=parse_response(data)
     return result
 
-# Read questions from file input.txt
 with open("Input.json", "r") as f:
     query_json = json.load(f)
 
@@ -171,8 +142,7 @@ for q in query_json:
         continue
     query = dns_query_spec
     query["questions"][0]["qname"] = q['qname']
-# TODO create dns_query_spec with all the fields and "qname" , "qtype" obtained from q
     response = dns_query(dns_query_spec)
     print(json.dumps(response, indent=2))
-# TODO append response to output.txt
+
 

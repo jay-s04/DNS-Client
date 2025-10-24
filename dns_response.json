@@ -14,39 +14,7 @@
   "answers": [
     {
       "hostname": "princeton.edu",
-      "ttl": 14602,
-      "atype": 2,
-      "rtype": "NS",
-      "ip": null,
-      "nsname": "ns6.dnsmadeeasy.com"
-    },
-    {
-      "hostname": "princeton.edu",
-      "ttl": 14602,
-      "atype": 2,
-      "rtype": "NS",
-      "ip": null,
-      "nsname": "a7-65.akam.net"
-    },
-    {
-      "hostname": "princeton.edu",
-      "ttl": 14602,
-      "atype": 2,
-      "rtype": "NS",
-      "ip": null,
-      "nsname": "a6-64.akam.net"
-    },
-    {
-      "hostname": "princeton.edu",
-      "ttl": 14602,
-      "atype": 2,
-      "rtype": "NS",
-      "ip": null,
-      "nsname": "ns7.dnsmadeeasy.com"
-    },
-    {
-      "hostname": "princeton.edu",
-      "ttl": 14602,
+      "ttl": 9396,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
@@ -54,23 +22,23 @@
     },
     {
       "hostname": "princeton.edu",
-      "ttl": 14602,
+      "ttl": 9396,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
-      "nsname": "ns5.dnsmadeeasy.com"
+      "nsname": "ns6.dnsmadeeasy.com"
     },
     {
       "hostname": "princeton.edu",
-      "ttl": 14602,
+      "ttl": 9396,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
-      "nsname": "a24-66.akam.net"
+      "nsname": "a7-65.akam.net"
     },
     {
       "hostname": "princeton.edu",
-      "ttl": 14602,
+      "ttl": 9396,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
@@ -78,11 +46,43 @@
     },
     {
       "hostname": "princeton.edu",
-      "ttl": 14602,
+      "ttl": 9396,
+      "atype": 2,
+      "rtype": "NS",
+      "ip": null,
+      "nsname": "ns5.dnsmadeeasy.com"
+    },
+    {
+      "hostname": "princeton.edu",
+      "ttl": 9396,
+      "atype": 2,
+      "rtype": "NS",
+      "ip": null,
+      "nsname": "ns7.dnsmadeeasy.com"
+    },
+    {
+      "hostname": "princeton.edu",
+      "ttl": 9396,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
       "nsname": "a20-65.akam.net"
+    },
+    {
+      "hostname": "princeton.edu",
+      "ttl": 9396,
+      "atype": 2,
+      "rtype": "NS",
+      "ip": null,
+      "nsname": "a6-64.akam.net"
+    },
+    {
+      "hostname": "princeton.edu",
+      "ttl": 9396,
+      "atype": 2,
+      "rtype": "NS",
+      "ip": null,
+      "nsname": "a24-66.akam.net"
     }
   ],
   "authority": [],
