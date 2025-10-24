@@ -11,7 +11,7 @@ dns_query_spec = {
     "rd": 1,      # recursion desired
     "questions": [
         {
-            "qname": "soak.princeton.edu",
+            "qname": "princeton.edu",  # <-- CHANGED from "soak.princeton.edu"
             "qtype": 2,   # NS record
             "qclass": 1   # IN
         }
@@ -77,13 +77,35 @@ def parse_rr(data, offset):
     name, offset = parse_name(data, offset)
     atype, aclass, ttl, rdlength = struct.unpack("!HHIH", data[offset:offset+10])
     offset += 10
+    rdata_start = offset
     rdata = data[offset:offset+rdlength]
     offset += rdlength
-    record={}
-    ##########
-    ##  Your code here to create a record given data 
-    ## record fields shoud include  hostname, ttl, atype, rtype, ip, nsname
-    #################
+
+    # Build required record with fixed keys
+    type_map = {1: "A", 28: "AAAA", 2: "NS", 5: "CNAME"}
+    rtype = type_map.get(atype, f"TYPE{atype}")
+    record = {
+        "hostname": name,
+        "ttl": ttl,
+        "atype": atype,
+        "rtype": rtype,
+        "ip": None,
+        "nsname": None
+    }
+
+    # Populate fields by type
+    if atype == 1 and rdlength == 4:  # A
+        record["ip"] = socket.inet_ntoa(rdata)
+    elif atype == 28 and rdlength == 16:  # AAAA
+        try:
+            record["ip"] = socket.inet_ntop(socket.AF_INET6, rdata)
+        except AttributeError:
+            import ipaddress
+            record["ip"] = str(ipaddress.IPv6Address(rdata))
+    elif atype == 2:  # NS
+        nsname, _ = parse_name(data, rdata_start)
+        record["nsname"] = nsname
+    # (CNAME and others leave ip/nsname as None)
 
     return record,offset
 
@@ -118,15 +140,23 @@ def parse_response(data):
     for _ in range(ANCOUNT):
         rr, offset = parse_rr(data, offset)
         answers.append(rr)
-
-    
-
     response["answers"] = answers
-    
+
+    # Parse Authority RRs
+    authority = []
+    for _ in range(NSCOUNT):
+        rr, offset = parse_rr(data, offset)
+        authority.append(rr)
+    response["authority"] = authority
+
+    # Parse Additional RRs
+    additional = []
+    for _ in range(ARCOUNT):
+        rr, offset = parse_rr(data, offset)
+        additional.append(rr)
+    response["additional"] = additional
 
     return response
-
-
 
 def dns_query(query_spec, server=("8.8.8.8", 53)):
     query = build_query(query_spec)
@@ -137,8 +167,9 @@ def dns_query(query_spec, server=("8.8.8.8", 53)):
     sock.close()
     return parse_response(data)
 
-
 if __name__ == "__main__":
+    # keep assignment-conformant ID without changing the original definition
+    dns_query_spec["id"] = 1337
     response = dns_query(dns_query_spec)
     print(json.dumps(response,indent=2))
     with open("dns_response.json", "w") as f:
