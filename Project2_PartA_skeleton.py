@@ -5,7 +5,7 @@ import random
 import json
 
 dns_query_spec = {
-    "id": random.randint(0, 65535),
+    "id": 1337,
     "qr": 0,      
     "opcode": 0,  
     "rd": 1,      

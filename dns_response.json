@@ -14,23 +14,7 @@
   "answers": [
     {
       "hostname": "princeton.edu",
-      "ttl": 9396,
-      "atype": 2,
-      "rtype": "NS",
-      "ip": null,
-      "nsname": "a1-158.akam.net"
-    },
-    {
-      "hostname": "princeton.edu",
-      "ttl": 9396,
-      "atype": 2,
-      "rtype": "NS",
-      "ip": null,
-      "nsname": "ns6.dnsmadeeasy.com"
-    },
-    {
-      "hostname": "princeton.edu",
-      "ttl": 9396,
+      "ttl": 14047,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
@@ -38,15 +22,7 @@
     },
     {
       "hostname": "princeton.edu",
-      "ttl": 9396,
-      "atype": 2,
-      "rtype": "NS",
-      "ip": null,
-      "nsname": "a3-67.akam.net"
-    },
-    {
-      "hostname": "princeton.edu",
-      "ttl": 9396,
+      "ttl": 14047,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
@@ -54,7 +30,15 @@
     },
     {
       "hostname": "princeton.edu",
-      "ttl": 9396,
+      "ttl": 14047,
+      "atype": 2,
+      "rtype": "NS",
+      "ip": null,
+      "nsname": "a3-67.akam.net"
+    },
+    {
+      "hostname": "princeton.edu",
+      "ttl": 14047,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
@@ -62,7 +46,7 @@
     },
     {
       "hostname": "princeton.edu",
-      "ttl": 9396,
+      "ttl": 14047,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
@@ -70,7 +54,7 @@
     },
     {
       "hostname": "princeton.edu",
-      "ttl": 9396,
+      "ttl": 14047,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
@@ -78,11 +62,27 @@
     },
     {
       "hostname": "princeton.edu",
-      "ttl": 9396,
+      "ttl": 14047,
       "atype": 2,
       "rtype": "NS",
       "ip": null,
       "nsname": "a24-66.akam.net"
+    },
+    {
+      "hostname": "princeton.edu",
+      "ttl": 14047,
+      "atype": 2,
+      "rtype": "NS",
+      "ip": null,
+      "nsname": "a1-158.akam.net"
+    },
+    {
+      "hostname": "princeton.edu",
+      "ttl": 14047,
+      "atype": 2,
+      "rtype": "NS",
+      "ip": null,
+      "nsname": "ns6.dnsmadeeasy.com"
     }
   ],
   "authority": [],

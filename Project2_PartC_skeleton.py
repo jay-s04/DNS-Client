@@ -4,7 +4,7 @@ import random
 import json
 
 dns_query_spec = {
-    "id": random.randint(0, 65535),
+    "id": 1337,
     "qr": 0,      
     "opcode": 0,  
     "rd": 1,      
@@ -18,13 +18,6 @@ dns_query_spec = {
 }
 
 def load_root_servers(filename="root-servers"):
-    """
-    Load IPv4 root server addresses from a text file WITHOUT using re/os.
-    Search order: './root-servers', then '/mnt/data/root-servers'.
-    Lines may contain IPs with surrounding punctuation; we extract digits/dots.
-    Ignores blank lines and lines starting with '#' or ';'.
-    Returns a de-duped list of IPv4s preserving file order.
-    """
     paths = [filename, "/mnt/data/" + filename]
     ips, seen = [], set()
 
